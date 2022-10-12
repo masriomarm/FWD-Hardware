@@ -1,0 +1,11 @@
+.vscode/
+build/
+debug/
+*>*
+!*.c
+!*.h
+!*.md
+!*.txt
+!*.png
+!*.jpg
+!*.gif
