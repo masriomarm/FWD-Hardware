@@ -1,9 +1,10 @@
 #include "interrupt.h"
+#include "../app/app.h"
 #include "avr/io.h"
 #include "avr/iom32.h"
 #include <avr/interrupt.h>
-#include "../app/app.h"
 
+uint8_t tran_time = 0;
 
 void init_interrupt(void)
 {
@@ -11,26 +12,47 @@ void init_interrupt(void)
   /// enable global interrupts
 
   cli();
-  GICR |= SWT_PEDS;      /// enable ext interrupt.
-  SREG |= (1 << SREG_I); /// enable global interrupt.
-  sei();
+  GICR |= (1 << SWT_PEDS);      /// enable ext interrupt.
+  MCUCR |= (0b10 << 0);         /// interrupt at falling edge.
+  sei(); /// enable global interrupt.
+
 }
+
 ISR(TIMER1_COMPB_vect)
 {
   /// reset counter val;
   uint8_t sreg = SREG;
   cli();
+
+  tran_time = 1;
   TCNT1 = 0;
 
-  /// switch current mode & select transtion accordingly.
-  /// if mode cars;
-  tran_ptr = transition_cars;
-  /// else if mode pedstrains
-  tran_ptr = transition_pedstrain;
+  switch (sig_cars)
+  {
+    case STATE_START:
+      tran_ptr = trans_up;
+      break;
+    case STATE_END:
+      tran_ptr = trans_dn;
+    default:
+      break;
+  }
 
-  SREG = sreg;
+SREG = sreg;
 }
+
 ISR(INT0_vect)
 {
   /// switch mode, cars or pedstrains.
+  if (MCUCR & 1)
+  {/// low edge, button pressed
+    en_mode = EN_CARS;
+    MCUCR &= ~(1 << 0);
+  }
+  else
+  {
+    en_mode = EN_PEDS;
+    MCUCR |= (1 << 0);
+  }
+  TCNT1 = 0;
 }

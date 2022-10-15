@@ -3,6 +3,7 @@
 #include "mcal/gpio.h"
 #include "mcal/interrupt.h"
 #include "mcal/timer.h"
+#include "util/delay.h"
 
 int main(void)
 {
@@ -16,5 +17,14 @@ int main(void)
   init_timer();
   init_interrupt();
   app_start();
+  /*state_grn();*/
+  /*_delay_ms(1000);*/
+  /*LED_ALL_CLR;*/
+  /*state_red();*/
+  /*_delay_ms(1000);*/
+  /*LED_ALL_CLR;*/
+  /*state_yel();*/
+  /*_delay_ms(1000);*/
+  /*LED_ALL_CLR;*/
   return 0;
 }
