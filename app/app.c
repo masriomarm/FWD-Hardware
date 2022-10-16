@@ -20,38 +20,24 @@ void (*tran_ptr)(void) = trans_up;
 void state_red(void)
 {
   LED_CARS_RED_ON;
+  LED_PEDS_GRN_ON;
 
   LED_CARS_YEL_OFF;
   LED_CARS_GRN_OFF;
   LED_PEDS_RED_OFF;
   LED_PEDS_YEL_OFF;
 
-  if (EN_PEDS == en_mode)
-  {
-    LED_PEDS_GRN_ON;
-  }
-  else
-  {
-    LED_PEDS_GRN_OFF;
-  }
 }
 void state_grn(void)
 {
   LED_CARS_GRN_ON;
+  LED_PEDS_RED_ON;
 
   LED_CARS_RED_OFF;
   LED_CARS_YEL_OFF;
   LED_PEDS_GRN_OFF;
   LED_PEDS_YEL_OFF;
 
-  if (EN_PEDS == en_mode)
-  {
-    LED_PEDS_RED_ON;
-  }
-  else
-  {
-    LED_PEDS_RED_OFF;
-  }
 }
 void state_yel(void)
 {
@@ -65,10 +51,12 @@ void state_yel(void)
   if (EN_PEDS == en_mode)
   {
     LED_PEDS_YEL_TGL;
+    tran_ptr = trans_up;
   }
   else
   {
     LED_PEDS_YEL_OFF;
+    LED_PEDS_RED_ON;
   }
 }
 void set_state(void)
