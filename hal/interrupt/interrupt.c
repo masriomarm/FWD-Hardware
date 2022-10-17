@@ -1,5 +1,13 @@
 #include "interrupt.h"
 
+/**
+* @brief: Init interrupt configurations.
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void init_interrupt(void)
 {
   /// ext0 interrupt

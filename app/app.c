@@ -5,11 +5,27 @@ EN_MODE_t  en_mode = EN_CARS;
 
 extern uint8_t tran_time;
 
+/**
+* @brief: Increment current state
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void trans_up(void)
 {
   ++sig_cars;
 }
 
+/**
+* @brief: Decrement current state
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void trans_dn(void)
 {
   --sig_cars;
@@ -19,6 +35,14 @@ void (*state_action)(void) = state_grn;
 
 void (*tran_ptr)(void) = trans_up;
 
+/**
+* @brief: Execute Red state related actions.
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void state_red(void)
 {
   LED_CARS_RED_ON;
@@ -30,6 +54,14 @@ void state_red(void)
   LED_PEDS_YEL_OFF;
 }
 
+/**
+* @brief: Execute Green state related actions.
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void state_grn(void)
 {
   LED_CARS_GRN_ON;
@@ -41,6 +73,14 @@ void state_grn(void)
   LED_PEDS_YEL_OFF;
 }
 
+/**
+ * @brief: Execute Yellow state related actions.
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void state_yel(void)
 {
   LED_CARS_YEL_TGL;
@@ -62,6 +102,14 @@ void state_yel(void)
   }
 }
 
+/**
+* @brief: Set state to execute.
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void set_state(void)
 {
   switch (sig_cars)
@@ -80,6 +128,14 @@ void set_state(void)
   }
 }
 
+/**
+* @brief: Start running app
+*
+* @param: none
+*
+* @return: none
+*
+*/
 void app_start(void)
 {
   while (1)
@@ -95,6 +151,14 @@ void app_start(void)
   }
 }
 
+/**
+* @brief: Timer compare channle B interrupt handler
+*
+* @param: none
+*
+* @return: none
+*
+*/
 ISR(TIMER1_COMPB_vect)
 {
   TCNT1     = 0;
@@ -112,6 +176,14 @@ ISR(TIMER1_COMPB_vect)
   }
 }
 
+/**
+* @brief: Ext_Int0 interrupt handler.
+*
+* @param: none
+*
+* @return: none
+*
+*/
 ISR(INT0_vect)
 {
   /// switch mode, cars or pedstrains.
