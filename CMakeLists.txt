@@ -7,12 +7,11 @@ project(${PRJ_NAME})
 set(SRC_FILES
               main.c
               app/app.c
-              mcal/gpio.c
-              mcal/interrupt.c
-              mcal/timer.c)
+              hal/gpio/gpio.c
+              hal/interrupt/interrupt.c
+              hal/timer/timer.c)
 add_executable(${PRJ_NAME} ${SRC_FILES})
-target_include_directories(${PRJ_NAME} PUBLIC mcal/
-                                              ecu/
+target_include_directories(${PRJ_NAME} PUBLIC hal/
                                               app/)
 
 set_target_properties(${PRJ_NAME} PROPERTIES OUTPUT_NAME "${PRJ_NAME}.elf")

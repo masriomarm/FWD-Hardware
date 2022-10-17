@@ -3,7 +3,7 @@
 
 #include "avr/io.h"
 #include "avr/iom32.h"
-#include "hal/led/led.h"
+#include "../led/led.h"
 #include "util/delay.h"
 
 void init_GPIO(void);
