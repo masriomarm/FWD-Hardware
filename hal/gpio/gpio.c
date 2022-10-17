@@ -1,7 +1,4 @@
-#include "avr/io.h"
-#include "avr/iom32.h"
-#include "util/delay.h"
-#include "../ecu/led.h"
+#include "gpio.h"
 
 void init_GPIO(void)
 {
@@ -19,4 +16,6 @@ void init_GPIO(void)
   PORTB |= LED_PEDS_GRN | LED_PEDS_RED | LED_PEDS_YEL;
   _delay_ms(1000);
   PORTB ^= LED_PEDS_GRN | LED_PEDS_RED | LED_PEDS_YEL;
+
+  _delay_ms(100);
 }

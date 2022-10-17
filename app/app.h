@@ -1,9 +1,10 @@
 #ifndef APP_H_YIBHFNWS
 #define APP_H_YIBHFNWS
 
-#include "../ecu/led.h"
-#include "stdint.h"
-#include "stdlib.h"
+#include "hal/gpio/gpio.h"
+#include "hal/interrupt/interrupt.h"
+#include "hal/led/led.h"
+#include "hal/timer/timer.h"
 
 #define STATE_START EN_GRN
 #define STATE_END   EN_RED
