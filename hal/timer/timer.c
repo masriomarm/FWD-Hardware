@@ -1,6 +1,5 @@
 #include "timer.h"
 
-uint8_t tran_time = 0;
 
 /**
 * @brief: Init timer 1 configuration for required timing.

@@ -7,5 +7,8 @@
 
 #define SWT_PEDS INT0
 
+extern volatile uint8_t interrupt_sw_pds;
+extern volatile uint8_t tran_time;
+
 void init_interrupt(void);
 #endif /* end of include guard: INTERRUPT_H_MNDYOC2D */

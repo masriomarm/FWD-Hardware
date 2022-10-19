@@ -2,10 +2,7 @@
 
 int main(void)
 {
-  init_GPIO();
-  init_timer();
-  init_interrupt();
-  app_start();
+   app_start();
 
   return 0;
 }

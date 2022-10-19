@@ -1,49 +1,47 @@
 #include "app.h"
+#include "hal/gpio/gpio.h"
 
-EN_LIGHT_t sig_cars = EN_GRN, sig_peds = EN_GRN;
-EN_MODE_t  en_mode = EN_CARS;
+EN_LIGHT_t sig_cars, sig_peds;
+EN_MODE_t  en_mode;
 
-extern uint8_t tran_time;
+void (*state_action)(void) = NULL;
+void (*tran_ptr)(void)     = NULL;
 
 /**
-* @brief: Increment current state
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void trans_up(void)
+ * @brief: Increment current state
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void trans_up(void)
 {
   ++sig_cars;
 }
 
 /**
-* @brief: Decrement current state
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void trans_dn(void)
+ * @brief: Decrement current state
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void trans_dn(void)
 {
   --sig_cars;
 }
 
-void (*state_action)(void) = state_grn;
-
-void (*tran_ptr)(void) = trans_up;
-
 /**
-* @brief: Execute Red state related actions.
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void state_red(void)
+ * @brief: Execute Red state related actions.
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void state_red(void)
 {
   LED_CARS_RED_ON;
   LED_PEDS_GRN_ON;
@@ -55,14 +53,14 @@ void state_red(void)
 }
 
 /**
-* @brief: Execute Green state related actions.
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void state_grn(void)
+ * @brief: Execute Green state related actions.
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void state_grn(void)
 {
   LED_CARS_GRN_ON;
   LED_PEDS_RED_ON;
@@ -75,13 +73,13 @@ void state_grn(void)
 
 /**
  * @brief: Execute Yellow state related actions.
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void state_yel(void)
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void state_yel(void)
 {
   LED_CARS_YEL_TGL;
 
@@ -103,14 +101,14 @@ void state_yel(void)
 }
 
 /**
-* @brief: Set state to execute.
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void set_state(void)
+ * @brief: Set state to execute.
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void set_state(void)
 {
   switch (sig_cars)
   {
@@ -129,47 +127,21 @@ void set_state(void)
 }
 
 /**
-* @brief: Start running app
-*
-* @param: none
-*
-* @return: none
-*
-*/
-void app_start(void)
+ * @brief: udpate state transition
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void tran_update(void)
 {
-  while (1)
-  {
-    if (tran_time)
-    {
-      tran_ptr();
-      set_state();
-      tran_time = 0;
-    }
-    state_action();
-    _delay_ms(500);
-  }
-}
-
-/**
-* @brief: Timer compare channle B interrupt handler
-*
-* @param: none
-*
-* @return: none
-*
-*/
-ISR(TIMER1_COMPB_vect)
-{
-  TCNT1     = 0;
-  tran_time = 1;
-
   switch (sig_cars)
   {
-    case STATE_START:
+    case STATE_FIRST:
       tran_ptr = trans_up;
       break;
-    case STATE_END:
+    case STATE_LAST:
       tran_ptr = trans_dn;
     default:
       break;
@@ -177,25 +149,66 @@ ISR(TIMER1_COMPB_vect)
 }
 
 /**
-* @brief: Ext_Int0 interrupt handler.
-*
-* @param: none
-*
-* @return: none
-*
-*/
-ISR(INT0_vect)
+ * @brief: update operation mode
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void mode_update(void)
 {
-  /// switch mode, cars or pedstrains.
-  if (MCUCR & 1)
-  { /// low edge, button pressed
+  if (interrupt_sw_pds)
     en_mode = EN_CARS;
-    MCUCR &= ~(1 << 0);
-  }
   else
-  {
     en_mode = EN_PEDS;
-    MCUCR |= (1 << 0);
+}
+
+/**
+ * @brief: init app global var
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+static void init_app(void)
+{
+  state_action = state_grn;
+  tran_ptr     = trans_up;
+  en_mode      = EN_CARS;
+  sig_cars     = EN_GRN;
+  sig_peds     = EN_GRN;
+}
+
+/**
+ * @brief: Start running app
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
+void app_start(void)
+{
+  init_GPIO();
+  init_timer();
+  init_interrupt();
+
+  init_app();
+
+  while (1)
+  {
+    if (tran_time)
+    {
+      tran_update();
+      tran_ptr();
+      set_state();
+      tran_time = 0;
+    }
+    if (interrupt_sw_pds)
+      mode_update();
+    state_action();
+    _delay_ms(500);
   }
-  TCNT1 = 0;
 }
