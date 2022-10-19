@@ -171,7 +171,7 @@ static void mode_update(void)
  * @return: none
  *
  */
-static void init_app(void)
+static void app_init(void)
 {
   state_action = state_grn;
   tran_ptr     = trans_up;
@@ -194,7 +194,7 @@ void app_start(void)
   init_timer();
   init_interrupt();
 
-  init_app();
+  app_init();
 
   while (1)
   {
