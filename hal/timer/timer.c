@@ -1,14 +1,13 @@
 #include "timer.h"
 
-
 /**
-* @brief: Init timer 1 configuration for required timing.
-*
-* @param: none
-*
-* @return: none
-*
-*/
+ * @brief: Init timer 1 configuration for required timing.
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
 void init_timer(void)
 {
   /// init timer2 to fire at 5000ms

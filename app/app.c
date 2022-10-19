@@ -1,5 +1,4 @@
 #include "app.h"
-#include "hal/gpio/gpio.h"
 
 EN_LIGHT_t sig_cars, sig_peds;
 EN_MODE_t  en_mode;

@@ -1,13 +1,13 @@
 #include "gpio.h"
 
 /**
-* @brief: Init related IO pins
-*
-* @param: none
-*
-* @return: none
-*
-*/
+ * @brief: Init related IO pins
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
 void init_GPIO(void)
 {
   /// init PA0, PA1, PA2 as output. according to led.

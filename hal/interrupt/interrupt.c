@@ -1,16 +1,16 @@
 #include "interrupt.h"
 
 volatile uint8_t interrupt_sw_pds = 1;
-volatile uint8_t tran_time = 0;
+volatile uint8_t tran_time        = 0;
 
 /**
-* @brief: Init interrupt configurations.
-*
-* @param: none
-*
-* @return: none
-*
-*/
+ * @brief: Init interrupt configurations.
+ *
+ * @param: none
+ *
+ * @return: none
+ *
+ */
 void init_interrupt(void)
 {
   /// ext0 interrupt
