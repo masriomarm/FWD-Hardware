@@ -45,8 +45,8 @@ def Settings( **kwargs ):
   return {
     'flags': [ '-x', 'c', '-Wall', '-Wextra', '-Werror',
                 '-D__ATmega32__', '-DF_CPU=1000000UL',
-                '-isystem', '/usr/avr/include/',
                 '-I', '.',
+                '-isystem', '/usr/lib/avr/include/',
                 '-std=c99'
                 ],
   }

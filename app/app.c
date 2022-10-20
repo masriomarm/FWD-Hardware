@@ -42,6 +42,9 @@ static void trans_dn(void)
  */
 static void state_red(void)
 {
+  interrupt_sw_pds = 0;
+  en_mode = EN_CARS;
+
   LED_CARS_RED_ON;
   LED_PEDS_GRN_ON;
 
@@ -61,6 +64,8 @@ static void state_red(void)
  */
 static void state_grn(void)
 {
+  en_mode = EN_CARS;
+
   LED_CARS_GRN_ON;
   LED_PEDS_RED_ON;
 
@@ -68,6 +73,11 @@ static void state_grn(void)
   LED_CARS_YEL_OFF;
   LED_PEDS_GRN_OFF;
   LED_PEDS_YEL_OFF;
+
+  if(interrupt_sw_pds)
+  {
+    en_mode = EN_PEDS;
+  }
 }
 
 /**
@@ -96,6 +106,12 @@ static void state_yel(void)
   {
     LED_PEDS_YEL_OFF;
     LED_PEDS_RED_ON;
+  }
+
+  en_mode = EN_CARS;
+  if(interrupt_sw_pds)
+  {
+    en_mode = EN_PEDS;
   }
 }
 
@@ -155,13 +171,13 @@ static void tran_update(void)
  * @return: none
  *
  */
-static void mode_update(void)
-{
-  if (interrupt_sw_pds)
-    en_mode = EN_CARS;
-  else
-    en_mode = EN_PEDS;
-}
+/*static void mode_update(void)*/
+/*{*/
+  /*if (interrupt_sw_pds)*/
+    /*en_mode = EN_CARS;*/
+  /*else*/
+    /*en_mode = EN_PEDS;*/
+/*}*/
 
 /**
  * @brief: init app global var
@@ -205,8 +221,7 @@ void app_start(void)
       set_state();
       tran_time = 0;
     }
-    if (interrupt_sw_pds)
-      mode_update();
+    /*mode_update();*/
     state_action();
     _delay_ms(500);
   }

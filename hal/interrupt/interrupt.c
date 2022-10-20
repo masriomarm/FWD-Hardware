@@ -1,6 +1,6 @@
 #include "interrupt.h"
 
-volatile uint8_t interrupt_sw_pds = 1;
+volatile uint8_t interrupt_sw_pds = 0;
 volatile uint8_t tran_time        = 0;
 
 /**
@@ -47,15 +47,6 @@ ISR(TIMER1_COMPB_vect)
 ISR(INT0_vect)
 {
   /// switch mode, cars or pedstrains.
-  if (MCUCR & 1)
-  { /// falling edge, button pressed
-    interrupt_sw_pds = 0;
-    MCUCR &= ~(1 << 0);
-  }
-  else
-  { /// rising edge, button released.
-    interrupt_sw_pds = 1;
-    MCUCR |= (1 << 0);
-  }
+  interrupt_sw_pds = 1;
   TCNT1 = 0;
 }
