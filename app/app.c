@@ -3,6 +3,8 @@
 EN_LIGHT_t sig_cars, sig_peds;
 EN_MODE_t  en_mode;
 
+uint8_t interrupt_sw_pds_clear = 1;
+
 void (*state_action)(void) = NULL;
 void (*tran_ptr)(void)     = NULL;
 
@@ -42,9 +44,6 @@ static void trans_dn(void)
  */
 static void state_red(void)
 {
-  interrupt_sw_pds = 0;
-  en_mode = EN_CARS;
-
   LED_CARS_RED_ON;
   LED_PEDS_GRN_ON;
 
@@ -52,6 +51,8 @@ static void state_red(void)
   LED_CARS_GRN_OFF;
   LED_PEDS_RED_OFF;
   LED_PEDS_YEL_OFF;
+
+  interrupt_sw_pds_clear = 1;
 }
 
 /**
@@ -64,8 +65,6 @@ static void state_red(void)
  */
 static void state_grn(void)
 {
-  en_mode = EN_CARS;
-
   LED_CARS_GRN_ON;
   LED_PEDS_RED_ON;
 
@@ -74,9 +73,10 @@ static void state_grn(void)
   LED_PEDS_GRN_OFF;
   LED_PEDS_YEL_OFF;
 
-  if(interrupt_sw_pds)
+  if (interrupt_sw_pds)
   {
     en_mode = EN_PEDS;
+    interrupt_sw_pds_clear = 0;
   }
 }
 
@@ -107,12 +107,7 @@ static void state_yel(void)
     LED_PEDS_YEL_OFF;
     LED_PEDS_RED_ON;
   }
-
-  en_mode = EN_CARS;
-  if(interrupt_sw_pds)
-  {
-    en_mode = EN_PEDS;
-  }
+    interrupt_sw_pds_clear = 1;
 }
 
 /**
@@ -171,13 +166,13 @@ static void tran_update(void)
  * @return: none
  *
  */
-/*static void mode_update(void)*/
-/*{*/
-  /*if (interrupt_sw_pds)*/
-    /*en_mode = EN_CARS;*/
-  /*else*/
-    /*en_mode = EN_PEDS;*/
-/*}*/
+static void mode_update(void)
+{
+  if (interrupt_sw_pds)
+    en_mode = EN_PEDS;
+  else
+    en_mode = EN_CARS;
+}
 
 /**
  * @brief: init app global var
@@ -220,8 +215,14 @@ void app_start(void)
       tran_ptr();
       set_state();
       tran_time = 0;
+      if (interrupt_sw_pds_clear)
+      {
+        interrupt_sw_pds = 0;
+        interrupt_sw_pds_clear = 0;
+      }
+
     }
-    /*mode_update();*/
+    mode_update();
     state_action();
     _delay_ms(500);
   }

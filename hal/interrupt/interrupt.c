@@ -18,7 +18,7 @@ void init_interrupt(void)
 
   cli();
   GICR |= (1 << SWT_PEDS); /// enable ext interrupt.
-  MCUCR |= (0b10 << 0);    /// interrupt at falling edge.
+  MCUCR |= (0b11 << 0);    /// interrupt at rising edge.
   sei();                   /// enable global interrupt.
 }
 
@@ -46,7 +46,7 @@ ISR(TIMER1_COMPB_vect)
  */
 ISR(INT0_vect)
 {
-  /// switch mode, cars or pedstrains.
+  /// Peds mode enable
   interrupt_sw_pds = 1;
   TCNT1 = 0;
 }
