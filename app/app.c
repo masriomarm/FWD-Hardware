@@ -206,7 +206,9 @@ void app_start(void)
       tran_time = 0;
     }
     if (interrupt_sw_pds)
+    {
       mode_update();
+    }
     state_action();
     _delay_ms(500);
   }
