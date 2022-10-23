@@ -7,6 +7,6 @@
 
 #define TRANS_DURATION 5000
 
-void init_timer(void);
+uint8_t init_timer(void);
 
 #endif /* end of include guard: TIMER_H_OIR0BPHN */

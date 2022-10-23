@@ -65,6 +65,8 @@ static void state_red(void)
  */
 static void state_grn(void)
 {
+  /// green light state actions
+
   LED_CARS_GRN_ON;
   LED_PEDS_RED_ON;
 
@@ -118,8 +120,10 @@ static void state_yel(void)
  * @return: none
  *
  */
-static void set_state(void)
+static uint8_t set_state(void)
 {
+  /// set current light action
+
   switch (sig_cars)
   {
     case EN_GRN:
@@ -132,8 +136,10 @@ static void set_state(void)
       state_action = state_red;
       break;
     default:
+      return 1;
       break;
   }
+  return 0;
 }
 
 /**
@@ -144,7 +150,7 @@ static void set_state(void)
  * @return: none
  *
  */
-static void tran_update(void)
+static uint8_t tran_update(void)
 {
   switch (sig_cars)
   {
@@ -154,8 +160,10 @@ static void tran_update(void)
     case STATE_LAST:
       tran_ptr = trans_dn;
     default:
+      return 1;
       break;
   }
+  return 0;
 }
 
 /**
@@ -168,6 +176,8 @@ static void tran_update(void)
  */
 static void mode_update(void)
 {
+  /// check if pedstrain switched, act accordingly
+
   if (interrupt_sw_pds)
     en_mode = EN_PEDS;
   else
@@ -184,6 +194,8 @@ static void mode_update(void)
  */
 static void app_init(void)
 {
+  /// init app related vars
+
   state_action = state_grn;
   tran_ptr     = trans_up;
   en_mode      = EN_CARS;
@@ -201,9 +213,14 @@ static void app_init(void)
  */
 void app_start(void)
 {
-  init_GPIO();
+  /// init timer config
+  /// init interrupt config
+  /// init DIOs
+  /// init app global vars
+
   init_timer();
   init_interrupt();
+  init_GPIO();
 
   app_init();
 

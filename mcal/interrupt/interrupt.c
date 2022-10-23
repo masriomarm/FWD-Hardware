@@ -11,15 +11,16 @@ volatile uint8_t tran_time        = 0;
  * @return: none
  *
  */
-void init_interrupt(void)
+uint8_t init_interrupt(void)
 {
-  /// ext0 interrupt
+  /// ext0 interrupt at rising edge
   /// enable global interrupts
 
-  cli();
   GICR |= (1 << SWT_PEDS); /// enable ext interrupt.
   MCUCR |= (0b11 << 0);    /// interrupt at rising edge.
   sei();                   /// enable global interrupt.
+
+  return 0;
 }
 
 /**
@@ -32,6 +33,9 @@ void init_interrupt(void)
  */
 ISR(TIMER1_COMPB_vect)
 {
+  /// reset timer1 counter
+  /// set transition flag
+
   TCNT1     = 0;
   tran_time = 1;
 }
@@ -46,7 +50,8 @@ ISR(TIMER1_COMPB_vect)
  */
 ISR(INT0_vect)
 {
-  /// Peds mode enable
+  /// Set peds mode flag
+  /// Refresh counter duration
   interrupt_sw_pds = 1;
   TCNT1 = 0;
 }

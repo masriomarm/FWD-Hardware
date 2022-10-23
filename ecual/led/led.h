@@ -47,12 +47,4 @@
 #define LED_PEDS_RED_OFF \
   ((LED_PEDS_PORT_RED) &= ~(LED_PEDS_RED)) ///< Turn peds red led off
 
-#define LED_ALL_CLR \
-  LED_CARS_GRN_OFF; \
-  LED_CARS_RED_OFF; \
-  LED_CARS_YEL_OFF; \
-  LED_PEDS_GRN_OFF; \
-  LED_PEDS_RED_OFF; \
-  LED_PEDS_YEL_OFF;
-
 #endif /* end of include guard: LED_H_GYX5PBBN */
