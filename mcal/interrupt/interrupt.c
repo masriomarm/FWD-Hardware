@@ -11,15 +11,16 @@ volatile uint8_t tran_time        = 0;
  * @return: none
  *
  */
-void init_interrupt(void)
+uint8_t init_interrupt(void)
 {
-  /// ext0 interrupt
+  /// ext0 interrupt at falling edge
   /// enable global interrupts
 
-  cli();
   GICR |= (1 << SWT_PEDS); /// enable ext interrupt.
   MCUCR |= (0b10 << 0);    /// interrupt at falling edge.
   sei();                   /// enable global interrupt.
+
+  return 0;
 }
 
 /**
@@ -32,6 +33,9 @@ void init_interrupt(void)
  */
 ISR(TIMER1_COMPB_vect)
 {
+  /// reset timer1 counter
+  /// set transition flag
+
   TCNT1     = 0;
   tran_time = 1;
 }
@@ -46,7 +50,10 @@ ISR(TIMER1_COMPB_vect)
  */
 ISR(INT0_vect)
 {
-  /// switch mode, cars or pedstrains.
+  /// check for current edge level
+  /// take action accordingly and toggle edge level
+  /// reset timer1 counter to refresh duration
+
   if (MCUCR & 1)
   { /// falling edge, button pressed
     interrupt_sw_pds = 0;
