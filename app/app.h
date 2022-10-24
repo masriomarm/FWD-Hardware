@@ -1,10 +1,10 @@
 #ifndef APP_H_YIBHFNWS
 #define APP_H_YIBHFNWS
 
-#include "../hal/gpio/gpio.h"
-#include "../hal/interrupt/interrupt.h"
-#include "../hal/led/led.h"
-#include "../hal/timer/timer.h"
+#include "../ecual/led/led.h"
+#include "../mcal/gpio/gpio.h"
+#include "../mcal/interrupt/interrupt.h"
+#include "../mcal/timer/timer.h"
 #include <stdlib.h>
 
 #define STATE_FIRST EN_GRN
