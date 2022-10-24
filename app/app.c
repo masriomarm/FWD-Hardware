@@ -44,6 +44,11 @@ static void trans_dn(void)
  */
 static void state_red(void)
 {
+  /// red light state actions
+  /// car red led on
+  /// peds green led on
+  /// clear transition (update mode)
+
   LED_CARS_RED_ON;
   LED_PEDS_GRN_ON;
 
@@ -66,6 +71,11 @@ static void state_red(void)
 static void state_grn(void)
 {
   /// green light state actions
+  /// car green led on
+  /// peds red led on
+  /// if peds switch pressed,
+    /// change to peds mode
+    /// maintain transition to next yel (don't update mode)
 
   LED_CARS_GRN_ON;
   LED_PEDS_RED_ON;
@@ -92,6 +102,16 @@ static void state_grn(void)
  */
 static void state_yel(void)
 {
+  /// yellow light state actions
+  /// car yellow led toggle
+  /// if peds mode,
+    /// peds yellow led toggle
+    /// set next to red by trans_up
+  /// if cars mode,
+    /// peds red led on
+    /// peds yel led off
+  /// clear transition (update mode)
+
   LED_CARS_YEL_TGL;
 
   LED_CARS_RED_OFF;
