@@ -5,20 +5,34 @@ EN_MODE_t  en_mode;
 
 uint8_t interrupt_sw_pds_clear = 1;
 
-void (*state_action)(void) = NULL;
-void (*tran_ptr)(void)     = NULL;
+uint8_t (*state_action)(void) = NULL;
+uint8_t (*tran_ptr)(void)     = NULL;
 
+void error_handle(void)
+{
+  /// toggle cars & peds, yellow & red leds as indicaton of error
+  LED_CARS_YEL_ON;
+  LED_CARS_GRN_ON;
+  LED_CARS_RED_ON;
+  _delay_ms(100);
+
+  LED_PEDS_YEL_OFF;
+  LED_PEDS_GRN_OFF;
+  LED_PEDS_RED_OFF;
+  _delay_ms(100);
+}
 /**
  * @brief: Increment current state
  *
  * @param: none
  *
- * @return: none
+ * @return: 0
  *
  */
-static void trans_up(void)
+static uint8_t trans_up(void)
 {
   ++sig_cars;
+  return 0;
 }
 
 /**
@@ -26,12 +40,13 @@ static void trans_up(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0
  *
  */
-static void trans_dn(void)
+static uint8_t trans_dn(void)
 {
   --sig_cars;
+  return 0;
 }
 
 /**
@@ -39,10 +54,10 @@ static void trans_dn(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0
  *
  */
-static void state_red(void)
+static uint8_t state_red(void)
 {
   /// red light state actions
   /// car red led on
@@ -58,6 +73,7 @@ static void state_red(void)
   LED_PEDS_YEL_OFF;
 
   interrupt_sw_pds_clear = 1;
+  return 0;
 }
 
 /**
@@ -65,10 +81,10 @@ static void state_red(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0 on cars mode, 1 on peds mode
  *
  */
-static void state_grn(void)
+static uint8_t state_grn(void)
 {
   /// green light state actions
   /// car green led on
@@ -89,7 +105,9 @@ static void state_grn(void)
   {
     en_mode = EN_PEDS;
     interrupt_sw_pds_clear = 0;
+    return 1;
   }
+  return 0;
 }
 
 /**
@@ -97,10 +115,10 @@ static void state_grn(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0
  *
  */
-static void state_yel(void)
+static uint8_t state_yel(void)
 {
   /// yellow light state actions
   /// car yellow led toggle
@@ -130,6 +148,7 @@ static void state_yel(void)
     LED_PEDS_RED_ON;
   }
     interrupt_sw_pds_clear = 1;
+  return 0;
 }
 
 /**
@@ -137,7 +156,7 @@ static void state_yel(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0 on success, 1 on fail
  *
  */
 static uint8_t set_state(void)
@@ -167,7 +186,7 @@ static uint8_t set_state(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0 on fail, 1 on success
  *
  */
 static uint8_t tran_update(void)
@@ -191,17 +210,23 @@ static uint8_t tran_update(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0 on cars mode, 1 on peds mode
  *
  */
-static void mode_update(void)
+static uint8_t mode_update(void)
 {
   /// check if pedstrain switched, act accordingly
 
   if (interrupt_sw_pds)
+  {
     en_mode = EN_PEDS;
+    return 1;
+  }
   else
+  {
     en_mode = EN_CARS;
+    return 0;
+  }
 }
 
 /**
@@ -209,10 +234,10 @@ static void mode_update(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 0
  *
  */
-static void app_init(void)
+static uint8_t app_init(void)
 {
   /// init app related vars
 
@@ -221,6 +246,7 @@ static void app_init(void)
   en_mode      = EN_CARS;
   sig_cars     = EN_GRN;
   sig_peds     = EN_GRN;
+  return 0;
 }
 
 /**
@@ -228,10 +254,10 @@ static void app_init(void)
  *
  * @param: none
  *
- * @return: none
+ * @return: 1 on fail. super loop, shouldn't return.
  *
  */
-void app_start(void)
+uint8_t app_start(void)
 {
   /// init timer config
   /// init interrupt config
@@ -248,9 +274,9 @@ void app_start(void)
   {
     if (tran_time)
     {
-      tran_update();
+      if(tran_update()) error_handle();
       tran_ptr();
-      set_state();
+      if(set_state()) error_handle();
       tran_time = 0;
       if (interrupt_sw_pds_clear)
       {
@@ -266,4 +292,5 @@ void app_start(void)
     state_action();
     _delay_ms(500);
   }
+  return 1;
 }

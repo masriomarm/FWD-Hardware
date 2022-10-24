@@ -16,6 +16,7 @@ typedef enum { EN_CARS, EN_PEDS } EN_MODE_t;
 extern EN_LIGHT_t sig_cars;
 extern EN_MODE_t  en_mode;
 
-void app_start(void);
+uint8_t app_start(void);
+void error_handle(void);
 
 #endif /* end of include guard: APP_H_YIBHFNWS */
