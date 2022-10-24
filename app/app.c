@@ -3,6 +3,8 @@
 EN_LIGHT_t sig_cars, sig_peds;
 EN_MODE_t  en_mode;
 
+uint8_t interrupt_sw_pds_clear = 1;
+
 void (*state_action)(void) = NULL;
 void (*tran_ptr)(void)     = NULL;
 
@@ -49,6 +51,8 @@ static void state_red(void)
   LED_CARS_GRN_OFF;
   LED_PEDS_RED_OFF;
   LED_PEDS_YEL_OFF;
+
+  interrupt_sw_pds_clear = 1;
 }
 
 /**
@@ -70,6 +74,12 @@ static void state_grn(void)
   LED_CARS_YEL_OFF;
   LED_PEDS_GRN_OFF;
   LED_PEDS_YEL_OFF;
+
+  if (interrupt_sw_pds)
+  {
+    en_mode = EN_PEDS;
+    interrupt_sw_pds_clear = 0;
+  }
 }
 
 /**
@@ -99,6 +109,7 @@ static void state_yel(void)
     LED_PEDS_YEL_OFF;
     LED_PEDS_RED_ON;
   }
+    interrupt_sw_pds_clear = 1;
 }
 
 /**
@@ -168,9 +179,9 @@ static void mode_update(void)
   /// check if pedstrain switched, act accordingly
 
   if (interrupt_sw_pds)
-    en_mode = EN_CARS;
-  else
     en_mode = EN_PEDS;
+  else
+    en_mode = EN_CARS;
 }
 
 /**
@@ -221,6 +232,12 @@ void app_start(void)
       tran_ptr();
       set_state();
       tran_time = 0;
+      if (interrupt_sw_pds_clear)
+      {
+        interrupt_sw_pds = 0;
+        interrupt_sw_pds_clear = 0;
+      }
+
     }
     if (interrupt_sw_pds)
     {

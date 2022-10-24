@@ -1,6 +1,6 @@
 #include "interrupt.h"
 
-volatile uint8_t interrupt_sw_pds = 1;
+volatile uint8_t interrupt_sw_pds = 0;
 volatile uint8_t tran_time        = 0;
 
 /**
@@ -13,11 +13,11 @@ volatile uint8_t tran_time        = 0;
  */
 uint8_t init_interrupt(void)
 {
-  /// ext0 interrupt at falling edge
+  /// ext0 interrupt at rising edge
   /// enable global interrupts
 
   GICR |= (1 << SWT_PEDS); /// enable ext interrupt.
-  MCUCR |= (0b10 << 0);    /// interrupt at falling edge.
+  MCUCR |= (0b11 << 0);    /// interrupt at rising edge.
   sei();                   /// enable global interrupt.
 
   return 0;
@@ -50,19 +50,8 @@ ISR(TIMER1_COMPB_vect)
  */
 ISR(INT0_vect)
 {
-  /// check for current edge level
-  /// take action accordingly and toggle edge level
-  /// reset timer1 counter to refresh duration
-
-  if (MCUCR & 1)
-  { /// falling edge, button pressed
-    interrupt_sw_pds = 0;
-    MCUCR &= ~(1 << 0);
-  }
-  else
-  { /// rising edge, button released.
-    interrupt_sw_pds = 1;
-    MCUCR |= (1 << 0);
-  }
+  /// Set peds mode flag
+  /// Refresh counter duration
+  interrupt_sw_pds = 1;
   TCNT1 = 0;
 }
