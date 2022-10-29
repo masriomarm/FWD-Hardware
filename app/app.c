@@ -271,6 +271,7 @@ uint8_t app_start(void)
   init_timer();
   init_interrupt();
   init_GPIO();
+  init_uart();
 
   app_init();
 
