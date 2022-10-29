@@ -8,6 +8,7 @@ set(SRC_FILES
               main.c
               app/app.c
               mcal/gpio/gpio.c
+              mcal/uart/uart.c
               mcal/interrupt/interrupt.c
               mcal/timer/timer.c)
 add_executable(${PRJ_NAME} ${SRC_FILES})

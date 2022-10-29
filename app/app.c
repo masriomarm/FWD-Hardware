@@ -105,8 +105,10 @@ static uint8_t state_grn(void)
   {
     en_mode = EN_PEDS;
     interrupt_sw_pds_clear = 0;
+  uart_put("green light, peds mode", strlen("green light, peds mode"));
     return 1;
   }
+  uart_put("green light, car mode", strlen("green light, car mode"));
   return 0;
 }
 
@@ -141,11 +143,13 @@ static uint8_t state_yel(void)
   {
     LED_PEDS_YEL_TGL;
     tran_ptr = trans_up;
+  uart_put("green light, peds mode", strlen("green light, peds mode"));
   }
   else
   {
     LED_PEDS_YEL_OFF;
     LED_PEDS_RED_ON;
+  uart_put("green light, car mode", strlen("green light, car mode"));
   }
     interrupt_sw_pds_clear = 1;
   return 0;

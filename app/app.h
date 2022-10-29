@@ -5,7 +5,10 @@
 #include "../mcal/gpio/gpio.h"
 #include "../mcal/interrupt/interrupt.h"
 #include "../mcal/timer/timer.h"
+#include "../mcal/uart/uart.h"
 #include <stdlib.h>
+#include <string.h>
+
 
 #define STATE_FIRST EN_GRN
 #define STATE_LAST  EN_RED
@@ -17,6 +20,6 @@ extern EN_LIGHT_t sig_cars;
 extern EN_MODE_t  en_mode;
 
 uint8_t app_start(void);
-void error_handle(void);
+void    error_handle(void);
 
 #endif /* end of include guard: APP_H_YIBHFNWS */
